@@ -9,7 +9,53 @@ from typing import Dict, Any, Optional
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+# src/utils.py -> project root
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+ENV_FILE = PROJECT_ROOT / ".env"
+
+_KEY_ALIASES = (
+    ("LANGSMITH_API_KEY", "LANGCHAIN_API_KEY"),
+    ("LANGCHAIN_API_KEY", "LANGSMITH_API_KEY"),
+    ("LANGSMITH_ENDPOINT", "LANGCHAIN_ENDPOINT"),
+    ("LANGCHAIN_ENDPOINT", "LANGSMITH_ENDPOINT"),
+    ("LANGSMITH_PROJECT", "LANGCHAIN_PROJECT"),
+    ("LANGCHAIN_PROJECT", "LANGSMITH_PROJECT"),
+    ("LANGSMITH_TRACING", "LANGCHAIN_TRACING_V2"),
+    ("LANGCHAIN_TRACING_V2", "LANGSMITH_TRACING"),
+)
+
+
+def load_project_env(*, override: bool = True) -> Path:
+    """
+    Carrega o .env da raiz do projeto com override e sincroniza aliases
+    LANGSMITH_* <-> LANGCHAIN_* (hub.pull / Client aceitam ambos).
+    """
+    if ENV_FILE.exists():
+        load_dotenv(ENV_FILE, override=override)
+    else:
+        load_dotenv(override=override)
+
+    for key in (
+        "LANGSMITH_API_KEY",
+        "LANGCHAIN_API_KEY",
+        "LANGSMITH_ENDPOINT",
+        "LANGCHAIN_ENDPOINT",
+        "USERNAME_LANGSMITH_HUB",
+    ):
+        value = os.getenv(key)
+        if value is not None:
+            os.environ[key] = value.strip().strip('"').strip("'")
+
+    for src, dst in _KEY_ALIASES:
+        src_val = os.getenv(src)
+        if src_val and not os.getenv(dst):
+            os.environ[dst] = src_val
+
+    return ENV_FILE
+
+
+# Carrega no import para scripts que só importam helpers
+load_project_env()
 
 
 def load_yaml(file_path: str) -> Optional[Dict[str, Any]]:

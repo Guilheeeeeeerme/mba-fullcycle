@@ -25,11 +25,10 @@ import os
 import json
 import re
 from typing import Dict, Any
-from dotenv import load_dotenv
 from langchain_core.messages import SystemMessage, HumanMessage
-from utils import get_eval_llm
+from utils import get_eval_llm, load_project_env
 
-load_dotenv()
+load_project_env()
 
 
 def get_evaluator_llm():

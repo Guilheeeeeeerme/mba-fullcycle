@@ -12,12 +12,11 @@ SIMPLIFICADO: Código mais limpo e direto ao ponto.
 
 import os
 import sys
-from dotenv import load_dotenv
 from langchain import hub
 from langchain_core.prompts import ChatPromptTemplate
-from utils import load_yaml, check_env_vars, print_section_header
+from utils import load_yaml, check_env_vars, print_section_header, load_project_env
 
-load_dotenv()
+load_project_env()
 
 
 def validate_prompt(prompt_data: dict) -> tuple[bool, list]:
@@ -85,6 +84,8 @@ def push_prompt_to_langsmith(prompt_name: str, prompt_data: dict) -> bool:
         url = hub.push(
             prompt_name,
             template,
+            api_key=os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY"),
+            api_url=os.getenv("LANGSMITH_ENDPOINT") or os.getenv("LANGCHAIN_ENDPOINT"),
             new_repo_is_public=True,
             new_repo_description=description,
             tags=prompt_data.get("tags", []),
@@ -100,6 +101,7 @@ def push_prompt_to_langsmith(prompt_name: str, prompt_data: dict) -> bool:
 def main():
     """Função principal"""
     print_section_header("PUSH DE PROMPTS OTIMIZADOS PARA O LANGSMITH HUB")
+    load_project_env(override=True)
 
     if not check_env_vars(["LANGSMITH_API_KEY", "USERNAME_LANGSMITH_HUB"]):
         return 1

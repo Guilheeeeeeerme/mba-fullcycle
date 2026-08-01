@@ -22,14 +22,19 @@ import sys
 import json
 from typing import List, Dict, Any
 from pathlib import Path
-from dotenv import load_dotenv
 from langsmith import Client
 from langchain import hub
 from langchain_core.prompts import ChatPromptTemplate
-from utils import check_env_vars, format_score, print_section_header, get_llm as get_configured_llm
+from utils import (
+    check_env_vars,
+    format_score,
+    print_section_header,
+    get_llm as get_configured_llm,
+    load_project_env,
+)
 from metrics import evaluate_f1_score, evaluate_clarity, evaluate_precision
 
-load_dotenv()
+load_project_env()
 
 
 def get_llm():
@@ -105,7 +110,9 @@ def create_evaluation_dataset(client: Client, dataset_name: str, jsonl_path: str
 def pull_prompt_from_langsmith(prompt_name: str) -> ChatPromptTemplate:
     try:
         print(f"   Puxando prompt do LangSmith Hub: {prompt_name}")
-        prompt = hub.pull(prompt_name)
+        api_key = os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY")
+        api_url = os.getenv("LANGSMITH_ENDPOINT") or os.getenv("LANGCHAIN_ENDPOINT")
+        prompt = hub.pull(prompt_name, api_key=api_key, api_url=api_url)
         print(f"   ✓ Prompt carregado com sucesso")
         return prompt
 
@@ -276,6 +283,7 @@ def display_results(prompt_name: str, scores: Dict[str, float]) -> bool:
 
 def main():
     print_section_header("AVALIAÇÃO DE PROMPTS OTIMIZADOS")
+    load_project_env(override=True)
 
     provider = os.getenv("LLM_PROVIDER", "openai")
     llm_model = os.getenv("LLM_MODEL", "gpt-4o-mini")

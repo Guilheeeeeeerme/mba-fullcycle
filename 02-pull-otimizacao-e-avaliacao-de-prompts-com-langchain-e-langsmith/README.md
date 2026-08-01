@@ -6,14 +6,27 @@ Baseado no boilerplate oficial [devfullcycle/mba-ia-pull-evaluation-prompt](http
 
 ## Pré-requisitos
 
-- Python 3.9+
+- Python 3.9–3.13 (não 3.14 — deps pinadas quebram no build do `pydantic-core`)
 - Conta LangSmith + API key
 - Chave OpenAI e/ou Google Gemini
 
 ## Configuração
 
+Em Ubuntu 26.04 / WSL o `python3` costuma ser 3.14. Use 3.12 (ex.: via [uv](https://docs.astral.sh/uv/)):
+
 ```bash
-python3 -m venv venv
+# se ainda não tiver: curl -LsSf https://astral.sh/uv/install.sh | sh
+uv python install 3.12
+uv venv --python 3.12 venv
+source venv/bin/activate
+uv pip install -r requirements.txt
+cp .env.example .env
+```
+
+Alternativa se já tiver `python3.12` no PATH:
+
+```bash
+python3.12 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -59,6 +72,10 @@ Link LangSmith (dashboard / prompt público): **TBD** após push + evaluate.
 ## C) Como Executar
 
 ```bash
+source venv/bin/activate
+# opcional: garante .env no shell (scripts já carregam sozinhos)
+set -a && source .env && set +a
+
 # 1. Pull do prompt de baixa qualidade
 python src/pull_prompts.py
 # → prompts/bug_to_user_story_v1.yml
@@ -74,6 +91,19 @@ python src/evaluate.py
 
 # 5. Testes estruturais do YAML v2
 pytest tests/test_prompts.py
+```
+
+### LangSmith CLI
+
+O pacote Python no venv expõe um `langsmith` antigo (docker). O wrapper do venv redireciona para o CLI oficial em `~/.local/bin/langsmith`.
+
+```bash
+# instalar (uma vez)
+curl -fsSL https://cli.langsmith.com/install.sh | sh
+
+# smoke test (com venv ativo)
+langsmith --version
+langsmith api commits/leonanluppi/bug_to_user_story_v1/latest | head
 ```
 
 ### Critério de aprovação
