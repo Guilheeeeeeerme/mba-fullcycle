@@ -14,7 +14,7 @@ Aplicação Python que divide um PDF em chunks, cria embeddings, armazena-os no 
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
+[ -f .env ] || cp .env.example .env
 ```
 
 Preencha `.env` com a chave do provedor escolhido. O padrão é OpenAI. Para Gemini, defina `LLM_PROVIDER=gemini` e `GOOGLE_API_KEY`.
