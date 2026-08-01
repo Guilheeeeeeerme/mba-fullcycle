@@ -43,6 +43,8 @@ python src/chat.py
 
 Digite `sair` para encerrar. Perguntas sem resposta explícita no contexto retornam: `Não tenho informações necessárias para responder sua pergunta.`
 
+**Importante:** ao mudar `LLM_PROVIDER` ou `EMBEDDING_PROVIDER`, as dimensões dos vetores mudam. Rode `python src/ingest.py` de novo antes do chat.
+
 ## Variáveis de ambiente
 
 | Variável | Padrão | Descrição |
@@ -51,7 +53,11 @@ Digite `sair` para encerrar. Perguntas sem resposta explícita no contexto retor
 | `OPENAI_API_KEY` | — | Chave da OpenAI |
 | `GOOGLE_API_KEY` | — | Chave do Google Gemini |
 | `OPENCODE_API_KEY` | — | Chave da assinatura OpenCode Go |
+| `OPENAI_MODEL` | `gpt-5.6-luna` | Modelo de chat OpenAI |
+| `GEMINI_MODEL` | `gemini-3.1-flash-lite` | Modelo de chat Gemini |
 | `OPENCODE_GO_MODEL` | `glm-5.1` | Modelo de chat no OpenCode Go (`kimi-k2.6`, `glm-5.2`, …) |
+| `OPENAI_EMBEDDING_MODEL` | `text-embedding-3-small` | Modelo de embedding OpenAI |
+| `GEMINI_EMBEDDING_MODEL` | `gemini-embedding-2` | Modelo de embedding Gemini |
 | `EMBEDDING_PROVIDER` | (auto) | `openai`, `gemini` ou `fastembed`. Com `opencode-go`, padrão é `fastembed` |
 | `DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/semantic_search` | Conexão com PostgreSQL |
 | `PGVECTOR_COLLECTION` | `pdf_documents` | Nome da coleção vetorial |
@@ -61,6 +67,6 @@ Digite `sair` para encerrar. Perguntas sem resposta explícita no contexto retor
 
 - Chunks: 1000 caracteres, overlap de 150
 - Busca vetorial: 10 resultados
-- OpenAI: `text-embedding-3-small` e `gpt-5-nano`
-- Gemini: `models/embedding-001` e `gemini-2.5-flash-lite`
+- OpenAI: `text-embedding-3-small` e `gpt-5.6-luna`
+- Gemini: `gemini-embedding-2` e `gemini-3.1-flash-lite`
 - OpenCode Go: chat via `https://opencode.ai/zen/go/v1` (padrão `glm-5.1`). Embeddings locais com FastEmbed (`paraphrase-multilingual-MiniLM-L12-v2`); override com `EMBEDDING_PROVIDER=gemini` ou `openai`.
