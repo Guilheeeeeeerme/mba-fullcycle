@@ -1,11 +1,18 @@
+import logging
+import warnings
+
+# Silencia avisos/logs de libs (FastEmbed, LangChain, etc.) no console do chat.
+warnings.filterwarnings("ignore")
+logging.disable(logging.WARNING)
+
 from search import answer_question
 
 
 def main() -> None:
-    print("Chat iniciado. Digite 'sair' para encerrar.")
+    print("Chat iniciado. Digite 'sair' para encerrar.\n")
     while True:
         try:
-            question = input("\nFaça sua pergunta:\n\nPERGUNTA: ").strip()
+            question = input("PERGUNTA: ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\nAté logo!")
             break
@@ -17,9 +24,9 @@ def main() -> None:
             continue
 
         try:
-            print(f"RESPOSTA: {answer_question(question)}")
+            print(f"RESPOSTA: {answer_question(question)}\n")
         except Exception as error:
-            print(f"ERRO: {error}")
+            print(f"ERRO: {error}\n")
 
 
 if __name__ == "__main__":

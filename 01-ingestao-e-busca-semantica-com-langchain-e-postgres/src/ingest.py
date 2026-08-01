@@ -13,10 +13,18 @@ def ingest_pdf(pdf_path: str = PDF_PATH) -> int:
         raise FileNotFoundError(f"PDF não encontrado: {path}")
 
     pages = PyPDFLoader(str(path)).load()
+    if not any(page.page_content.strip() for page in pages):
+        raise ValueError(
+            f"PDF sem texto extraível: {path}. "
+            "Use um PDF com camada de texto (não só imagem/scan)."
+        )
+
     chunks = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=150,
     ).split_documents(pages)
+    if not chunks:
+        raise ValueError(f"Nenhum chunk gerado a partir de {path}.")
 
     PGVector.from_documents(
         documents=chunks,
