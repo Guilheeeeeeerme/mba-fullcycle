@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "mba-fullcycle (main)",
+      "path": "."
+    },
+    {
+      "name": "01 ingestao busca semantica",
+      "path": "../mba-fullcycle-wt/01-ingestao-busca-semantica-langchain-postgres"
+    },
+    {
+      "name": "02 prompts langchain langsmith",
+      "path": "../mba-fullcycle-wt/02-pull-otimizacao-avaliacao-prompts-langchain-langsmith"
+    },
+    {
+      "name": "03 skill auditoria arquitetural",
+      "path": "../mba-fullcycle-wt/03-skill-auditoria-refatoracao-arquitetural"
+    },
+    {
+      "name": "04 streamtube upload videos",
+      "path": "../mba-fullcycle-wt/04-streamtube-fase-03-upload-processamento-videos"
+    },
+    {
+      "name": "05 design docs gerados por ia",
+      "path": "../mba-fullcycle-wt/05-design-docs-gerados-por-ia"
+    }
+  ],
+  "settings": {}
+}
