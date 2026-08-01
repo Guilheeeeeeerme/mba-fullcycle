@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 import os
 import json
@@ -15,6 +15,9 @@ def calculate_percentage(part, total):
     if total == 0:
         return 0
     return round((part / total) * 100, 2)
+
+def utc_now():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 def validate_email(email):
 
@@ -35,7 +38,7 @@ def generate_id():
 
 def log_action(action, details=None):
 
-    timestamp = datetime.utcnow()
+    timestamp = utc_now()
     print(f"[{timestamp}] ACTION: {action}")
     if details:
         print(f"  DETAILS: {details}")
@@ -106,6 +109,60 @@ def process_task_data(data, existing_task=None):
             result['tags'] = tags
 
     return result, None
+
+def is_task_overdue(due_date, status):
+    if not due_date:
+        return False
+    return due_date < utc_now() and status not in ['done', 'cancelled']
+
+def serialize_task(task, include_related=False, include_overdue=False):
+    data = {
+        'id': task.id,
+        'title': task.title,
+        'description': task.description,
+        'status': task.status,
+        'priority': task.priority,
+        'user_id': task.user_id,
+        'category_id': task.category_id,
+        'created_at': str(task.created_at),
+        'updated_at': str(task.updated_at),
+        'due_date': str(task.due_date) if task.due_date else None,
+        'tags': task.tags.split(',') if task.tags else [],
+    }
+
+    if include_related:
+        data['user_name'] = task.user.name if getattr(task, 'user', None) else None
+        data['category_name'] = task.category.name if getattr(task, 'category', None) else None
+
+    if include_overdue:
+        data['overdue'] = is_task_overdue(task.due_date, task.status)
+
+    return data
+
+def serialize_user(user, include_tasks=False):
+    data = {
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'role': user.role,
+        'active': user.active,
+        'created_at': str(user.created_at),
+    }
+
+    if include_tasks:
+        data['tasks'] = [serialize_task(task, include_related=False, include_overdue=True) for task in user.tasks]
+        data['task_count'] = len(user.tasks)
+
+    return data
+
+def serialize_category(category):
+    return {
+        'id': category.id,
+        'name': category.name,
+        'description': category.description,
+        'color': category.color,
+        'created_at': str(category.created_at),
+    }
 
 VALID_STATUSES = ['pending', 'in_progress', 'done', 'cancelled']
 VALID_ROLES = ['user', 'admin', 'manager']
