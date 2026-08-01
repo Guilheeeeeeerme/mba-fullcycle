@@ -3,6 +3,30 @@
     {
       "name": "mba-fullcycle",
       "path": "."
+    },
+    {
+      "name": "01 ingestao",
+      "path": "01-ingestao-e-busca-semantica-com-langchain-e-postgres"
+    },
+    {
+      "name": "02 prompts",
+      "path": "02-pull-otimizacao-e-avaliacao-de-prompts-com-langchain-e-langsmith"
+    },
+    {
+      "name": "03 skill",
+      "path": "03-skill-de-auditoria-e-refatoracao-arquitetural"
+    },
+    {
+      "name": "04 streamtube",
+      "path": "04-continuando-o-streamtube-com-ia-fase-03-upload-e-processamento-de-videos"
+    },
+    {
+      "name": "05 design-docs",
+      "path": "05-da-reuniao-ao-documento-design-docs-gerados-por-ia"
+    },
+    {
+      "name": "docs",
+      "path": "docs"
     }
   ],
   "settings": {}
