@@ -1,6 +1,6 @@
 # 03 — Skill de auditoria e refatoração arquitetural
 
-Skill Claude Code (`/refactor-arch`) agnóstica de stack: analisa codebase → audita anti-patterns (CRITICAL/HIGH/MEDIUM/LOW) → pede confirmação → refatora para MVC → valida.
+Skill OpenAI Codex (`$refactor-arch`) agnóstica de stack: analisa codebase → audita anti-patterns (CRITICAL/HIGH/MEDIUM/LOW) → pede confirmação → refatora para MVC → valida.
 
 **Base:** fork/conteúdo de [devfullcycle/mba-ia-refactor-projects-skill](https://github.com/devfullcycle/mba-ia-refactor-projects-skill) (sem `.git` aninhado). Enunciado original em `ENUNCIADO-BASE.md`.
 
@@ -12,7 +12,7 @@ Skill Claude Code (`/refactor-arch`) agnóstica de stack: analisa codebase → a
 | `ecommerce-api-legacy/` | Node.js / Express | LMS + checkout |
 | `task-manager-api/` | Python / Flask | Task Manager (camadas parciais) |
 
-Skill em cada projeto: `.claude/skills/refactor-arch/` (`SKILL.md` + referências).
+Skill em cada projeto: `.agents/skills/refactor-arch/` (`SKILL.md` + referências).
 
 ## Análise Manual
 
@@ -61,7 +61,7 @@ Skill em cada projeto: `.claude/skills/refactor-arch/` (`SKILL.md` + referência
 
 ### Design
 
-- **Invocação:** `/refactor-arch`
+- **Invocação:** `$refactor-arch`
 - **Fases:** (1) Analysis → (2) Audit + pause → (3) MVC refactor + validation
 - **Referências (obrigatórias):**
   - `project-analysis.md` — heurísticas de stack/arquitetura
@@ -83,7 +83,7 @@ Hardcoded secrets, SQLi, God Class, weak crypto, fat controller, global mutable 
 
 ## Resultados
 
-> Placeholders — preencher após `claude "/refactor-arch"` em cada projeto.
+> Placeholders — preencher após `codex '$refactor-arch'` em cada projeto.
 
 | Projeto | CRITICAL | HIGH | MEDIUM | LOW | App OK pós-Fase 3 |
 | --- | --- | --- | --- | --- | --- |
@@ -103,25 +103,46 @@ Relatórios: `reports/audit-project-{1,2,3}.md` (placeholders até a run).
 
 ### Pré-requisitos
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) instalado e autenticado
+- [OpenAI Codex](https://developers.openai.com/codex/) instalado e autenticado
 - Python 3 + deps dos projetos Flask; Node 18+ para `ecommerce-api-legacy`
+
+### Skill path (obrigatório para Codex)
+
+Codex carrega skills de **`.agents/skills/`**, não de `.claude/skills/`.
+Sem isso, `$refactor-arch` falha com “não está disponível nesta sessão”.
+
+```bash
+# Se a skill ainda estiver só em .claude/skills/, espelhar para Codex:
+for p in code-smells-project ecommerce-api-legacy task-manager-api; do
+  mkdir -p "$p/.agents/skills"
+  cp -r "$p/.claude/skills/refactor-arch" "$p/.agents/skills/"
+done
+```
+
+Layout esperado em cada projeto: `.agents/skills/refactor-arch/SKILL.md`
 
 ### Comandos
 
 ```bash
-# Projeto 1
+# Projeto 1 — criar skill aqui primeiro (.agents/skills/refactor-arch/)
 cd code-smells-project
-claude "/refactor-arch"
+codex '$refactor-arch'
 
-# Projeto 2 (skill já copiada)
+# Projeto 2 — copiar skill para .agents/skills/ deste projeto
 cd ../ecommerce-api-legacy
+mkdir -p .agents/skills
+cp -r ../code-smells-project/.agents/skills/refactor-arch .agents/skills/
 npm install
-claude "/refactor-arch"
+codex '$refactor-arch'
 
-# Projeto 3
+# Projeto 3 — mesma cópia
 cd ../task-manager-api
-claude "/refactor-arch"
+mkdir -p .agents/skills
+cp -r ../code-smells-project/.agents/skills/refactor-arch .agents/skills/
+codex '$refactor-arch'
 ```
+
+Se Codex já estiver aberto e a skill não aparecer: sair e reabrir `codex` no diretório do projeto.
 
 Salvar output da Fase 2 em `reports/audit-project-N.md`. Commitar código refatorado após Fase 3.
 
